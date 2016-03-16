@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 
 
 	VizHTM *viz = new VizHTM(NARRAY_);
-//	tenDegreeGrid(viz);
+	tenDegreeGrid(viz);
 	viz->triaxis();
 
 	SoSeparator *root = new SoSeparator;
