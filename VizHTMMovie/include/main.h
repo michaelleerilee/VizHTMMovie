@@ -18,5 +18,6 @@
 #include <Inventor/nodes/SoSelection.h>
 
 #include <misc.h>
+#include <VizHTM.h>
 
 #endif /* MAIN_H_ */
