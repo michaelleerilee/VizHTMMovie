@@ -40,6 +40,69 @@ void tenDegreeGrid(VizHTM *viz) {
 	}
 }
 
+void triangleGrid(VizHTM *viz, int htmIdLevel) {
+	int saveLevel = 5;
+	SpatialIndex *index = new SpatialIndex(htmIdLevel,saveLevel);
+
+	SpatialDomain domain1 = SpatialDomain(index);
+
+}
+
+void testTransparency(VizHTM *viz) {
+
+	// On Coin3D on Mac OS X with examiner viewer we have problems.
+	// DELAYED_BLEND crashes on the following
+	// BLEND seems to work. Looks better than ADD.
+	// ADD works.
+	// SORTED_* crashes
+
+	// Offscreen seems to work?
+
+	// order in which faces are added affects transparency.
+
+
+	viz->addFace3(
+			0.0,0.0,0.0,
+			0.0,1.0,0.0,
+			1.0,1.0,0.0,
+			1.0,0.0,0.0,
+			1.0,0.0,0.0,
+			1.0,0.0,0.0,
+			0.0,0.0,0.0
+			);
+
+	viz->addFace3(
+			0.0,0.0,0.15,
+			0.0,1.0,0.15,
+			1.0,1.0,0.15,
+			0.0,1.0,0.0,
+			0.0,1.0,0.0,
+			0.0,1.0,0.0,
+			0.5,0.5,0.5
+			);
+
+	viz->addFace3(
+			0.0,0.0,0.3,
+			0.0,1.0,0.3,
+			1.0,1.0,0.3,
+			0.0,0.0,1.0,
+			0.0,0.0,1.0,
+			0.0,0.0,1.0,
+			0.6,0.6,0.6
+			);
+
+	viz->addFace3(
+			-1,-1,-0.3,
+			-1.0,2.0,-0.3,
+			2.0,2.0,-0.3,
+			1,1,1,
+			1,1,1,
+			1,1,1,
+			0,0,0
+			);
+
+}
+
 
 void loadScene(SoSeparator *root, SoSeparator *content, SbViewportRegion *vpRegion){
 
@@ -52,7 +115,9 @@ void loadScene(SoSeparator *root, SoSeparator *content, SbViewportRegion *vpRegi
     SoPerspectiveCamera *perscam = new SoPerspectiveCamera;
     perscam->orientation.setValue(cameraRotation);
 ////    perscam->aspectRatio.setValue(270.0/480.0);
-    perscam->position.setValue(0,0,8);
+//    perscam->position.setValue(0,0,8);
+    perscam->position.setValue(1.1,1.1,1.5);
+    perscam->pointAt(SbVec3f(0.5,0.5,0));
 ////    perscam->viewportMapping.setValue(SoCamera::CROP_VIEWPORT_LINE_FRAME);
     perscam->nearDistance = 0.1;
 //
@@ -96,10 +161,10 @@ int main(int argc, char *argv[]) {
 	SoSelection *selectionRoot = new SoSelection;
 	selectionRoot->policy = SoSelection::SINGLE;
 
-
 	VizHTM *viz = new VizHTM(NARRAY_);
-	tenDegreeGrid(viz);
-	viz->triaxis();
+//	tenDegreeGrid(viz);
+//	viz->triaxis();
+	testTransparency(viz);
 
 	SoSeparator *root = new SoSeparator;
 
@@ -113,21 +178,26 @@ int main(int argc, char *argv[]) {
 	root->addChild(viz->makeRoot());
 	selectionRoot->addChild(root);
 
-	OffScreenViz *offscreen = new OffScreenViz();
+	OffScreenViz *offscreen = new OffScreenViz(800,600);
 	offscreen->initImageDirectory("tmp/offscreen/"+formattedDateTime()+"/",4);
 	offscreen->root = new SoSeparator;
 	loadScene(offscreen->root,root,offscreen->vpRegion);
 	offscreen->saveImage(1);
 
-	SoQtExaminerViewer *viewer = new SoQtExaminerViewer(window);
-	viewer->setSceneGraph(selectionRoot);
-	viewer->setTitle(mainName.c_str());
-	viewer->show();
+	if(false){
+		cout << "a1000" << endl << flush;
+		SoQtExaminerViewer *viewer = new SoQtExaminerViewer(window);
+		viewer->setSceneGraph(selectionRoot);
+		viewer->setTitle(mainName.c_str());
+		viewer->show();
+		cout << "a2000" << endl << flush;
+		SoQt::show(window);
+		SoQt::mainLoop();
+		cout << "a3000" << endl << flush;
+		delete viewer;
+	}
 
-	SoQt::show(window);
-	SoQt::mainLoop();
 
-	delete viewer;
 	std::cout << mainName << " graphics done." << std::endl;
 
 	std::cout << mainName << " exiting." << std::endl;

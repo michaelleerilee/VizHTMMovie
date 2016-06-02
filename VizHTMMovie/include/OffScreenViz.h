@@ -23,8 +23,13 @@
 class OffScreenViz {
 public:
 	OffScreenViz();
+	OffScreenViz(uint w, uint h) {
+		sceneWidth = w; sceneHeight = h;
+		init();
+	}
 	virtual ~OffScreenViz();
 
+	void init();
 	int initImageDirectory(const std::string basePath="tmp/", const uint fieldWidth=3);
 	QImage getImage();
 	void saveImage(const uint item);
